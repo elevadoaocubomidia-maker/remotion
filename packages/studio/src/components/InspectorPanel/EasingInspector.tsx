@@ -10,16 +10,19 @@ import {
 	type EasingSelection,
 } from '../Timeline/update-selected-easing';
 import {InspectorMessage, InspectorSectionHeader} from './common';
+import {SequenceInspectorHeaderWithDivider} from './SequenceInspectorHeader';
 import {
 	sectionHeaderRow,
 	sectionHeaderStart,
 	sectionHeaderTitle,
 	selectedContainer,
 } from './styles';
+import {useTrackForSelection} from './use-track-for-selection';
 
 export const EasingInspector: React.FC<{
 	readonly selection: EasingSelection;
 }> = ({selection}) => {
+	const track = useTrackForSelection(selection);
 	const {sequences} = useContext(Internals.SequenceManager);
 	const {overrideIdToNodePathMappings} = useContext(
 		Internals.OverrideIdsToNodePathsGettersContext,
@@ -66,12 +69,13 @@ export const EasingInspector: React.FC<{
 		[],
 	);
 
-	if (state === null) {
+	if (state === null || track === null) {
 		return <InspectorMessage>Easing unavailable</InspectorMessage>;
 	}
 
 	return (
 		<div style={selectedContainer} className={VERTICAL_SCROLLBAR_CLASSNAME}>
+			<SequenceInspectorHeaderWithDivider track={track} />
 			<EasingEditor
 				key={getTimelineSelectionKey(selection)}
 				state={state}
